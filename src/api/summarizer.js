@@ -15,7 +15,12 @@ export default async function handler(req, res) {
     }
 
     // Fetch page HTML
-    const pageRes = await fetch(url);
+    const pageRes = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
+    });
     const html = await pageRes.text();
 
     // Extract readable text
@@ -42,7 +47,7 @@ export default async function handler(req, res) {
     const summary = completion.choices[0].message.content;
     res.status(200).json({ summary });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to summarize URL" });
+    console.error("Summarize error:", err);
+    res.status(500).json({ error: err.message || "Failed to summarize URL" });
   }
 }
